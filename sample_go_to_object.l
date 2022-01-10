@@ -1,6 +1,6 @@
 #!/usr/bin/env roseus
 
-;;(defvar *base-frame-id* "/base_link")　;; To do: change this
+(defvar *base-frame-id* "/base_link") ;; To do: change this
 
 (load "package://spotkinovaeus/spotkinova-interface.l")
 
@@ -47,7 +47,7 @@
   ;; :worldpos
   (setq *obj-pos* (send *target-obj* :worldpos))
   (*obj-pos*)
-  ;;(send *ri* go-pos (send *target-obj* :worldpos)))　;; To do: change this
+  (send *ri* go-pos (send *target-obj* :worldpos))) ;; To do: change this
 
 
 (defun wait-for-target ()
