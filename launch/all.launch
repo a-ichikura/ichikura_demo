@@ -1,0 +1,22 @@
+<launch>
+
+  <include file="$(find ichikura_demo)/launch/republish.launch" >
+  </include>
+
+  <include file="$(find coral_usb)/launch/edgetpu_object_detector.launch" >
+    <arg name="INPUT_IMAGE" value="/remote/color/image_raw" />
+    <arg name="IMAGE_TRANSPORT" value="raw" />
+  </include>
+
+  <include file="$(find jsk_pcl_ros)/launch/hsi_color_filter.launch" >
+    <arg name="DEFAULT_NAMESPACE" value="/remote/aligned_depth_to_color" />
+    <arg name="INPUT" value="points" />
+    <arg name="h_max" default="0" />
+    <arg name="h_min" default="-15" />
+    <arg name="s_max" default="255" />
+    <arg name="s_min" default="50" />
+    <arg name="i_max" default="255" />
+    <arg name="i_min" default="100" />
+  </include>
+
+</launch>
