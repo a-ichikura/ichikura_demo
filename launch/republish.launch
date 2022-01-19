@@ -1,0 +1,56 @@
+<launch>
+
+  <arg name="camera" default="remote"/>
+  <arg name="queue_size"        default="30"/>
+  <arg name="respawn"           default="true"/>
+  <arg name="NS" default="remote" />
+
+  <group ns="$(arg NS)" >
+    <node name="$(arg camera)_nodelet_manager"
+          pkg="nodelet" type="nodelet"
+          args="manager"
+          output="screen" />
+
+    <group ns="color" >
+      <node name="republish_image"
+            pkg="image_transport" type="republish"
+            args="compressed raw">
+        <remap from="in" to="/kinova_wrist_camera/color/image_raw" />
+        <remap from="out" to="image_raw" />
+      </node>
+
+      <node name="relay_info"
+	          pkg="topic_tools" type="relay"
+	          args="/kinova_wrist_camera/color/camera_info
+	                camera_info">
+      </node>
+    </group>
+
+    <group ns="aligned_depth_to_color" >
+      <node name="republish_depth_image"
+            pkg="image_transport" type="republish"
+            args="compressedDepth raw">
+        <remap from="in" to="/kinova_wrist_camera/aligned_depth_to_color/image_raw" />
+        <remap from="out" to="image_raw" />
+      </node>
+
+      <node name="relay_info"
+	          pkg="topic_tools" type="relay"
+	          args="/kinova_wrist_camera/aligned_depth_to_color/camera_info
+	                camera_info">
+      </node>
+    </group>
+
+    <node name="$(arg camera)_points_xyzrgb_hd"
+          pkg="nodelet" type="nodelet"
+          args="load depth_image_proc/point_cloud_xyzrgb /$(arg NS)/$(arg camera)_nodelet_manager"
+          respawn="$(arg respawn)" >
+      <remap from="rgb/camera_info"             to="color/camera_info"/>
+      <remap from="rgb/image_rect_color"        to="color/image_raw"/>
+      <remap from="depth_registered/image_rect" to="aligned_depth_to_color/image_raw"/>
+      <remap from="depth_registered/points"     to="aligned_depth_to_color/points"/>
+      <param name="queue_size" type="int" value="$(arg queue_size)"/>
+    </node>
+  </group>
+
+</launch>
